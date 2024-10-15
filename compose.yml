@@ -1,0 +1,74 @@
+services:
+  user:
+    build:
+      context: ./user-service
+      dockerfile: docker/Dockerfile
+    image: node-app
+    environment:
+      - MONGODB_URL_USER=mongodb://admin:admin@mongodb:27017/discord-like-user?authSource=admin
+      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=1000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongodb
+    volumes:
+      - ./user-service/src:/app/src
+      - /app/node_modules
+    networks:
+      - node-network
+
+  message:
+    build:
+      context: ./message-service
+      dockerfile: docker/Dockerfile
+    image: node-app
+    environment:
+      - MONGODB_URL_MESSAGE=mongodb://admin:admin@mongodb:27017/discord-like-user?authSource=admin
+      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=1000
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongodb
+    volumes:
+      - ./message-service/src:/app/src
+      - /app/node_modules
+    networks:
+      - node-network
+
+  angular-app:
+    build:
+      context: ./frontend
+      dockerfile: docker/Dockerfile
+    ports:
+      - "4200:4200"
+    depends_on:
+      - user
+      - message
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./frontend/src:/app/src
+      - /app/node_modules
+    networks:
+      - node-network
+
+  mongodb:
+    image: mongo:6.0
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+    volumes:
+      - mongodb:/data/db
+    networks:
+      - node-network
+
+volumes:
+  mongodb:
+
+networks:
+  node-network:
+    driver: bridge

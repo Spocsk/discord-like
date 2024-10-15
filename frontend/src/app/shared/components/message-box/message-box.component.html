@@ -1,0 +1,9 @@
+<div class="message-box">
+  <div class="messages">
+    <div *ngFor="let message of messages" class="message">
+      {{ message.text }}
+    </div>
+  </div>
+  <input [(ngModel)]="newMessage" placeholder="Write a message..." />
+  <button (click)="sendMessage()">Send</button>
+</div>

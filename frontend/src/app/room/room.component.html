@@ -1,0 +1,10 @@
+<div class="rooms">
+  <h3>Rooms</h3>
+  <ul>
+    <li *ngFor="let room of rooms" (click)="selectRoom(room._id)">
+      {{ room.name }}
+    </li>
+  </ul>
+  <input [(ngModel)]="newRoomName" placeholder="New Room Name" />
+  <button (click)="createRoom()">Create Room</button>
+</div>

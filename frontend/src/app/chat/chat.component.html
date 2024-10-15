@@ -1,0 +1,4 @@
+<div class="chat-container">
+  <app-rooms (roomSelected)="selectRoom($event)"></app-rooms>
+  <app-message-box [roomId]="selectedRoom"></app-message-box>
+</div>
