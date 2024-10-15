@@ -12,8 +12,9 @@ import { MessageService } from 'src/message.service';
 
 @WebSocketGateway({
   cors: {
-    origin: '*',
-  },
+    origin: 'http://localhost:4200',
+    credentials: true
+  }
 })
 export class MessageGateway {
   @WebSocketServer()
@@ -28,6 +29,9 @@ export class MessageGateway {
   ): Promise<void> {
     const savedMessage =
       await this.messageService.createMessage(createMessageDto);
-    this.server.emit('receiveMessage', savedMessage);
+    // this.server.emit('receiveMessage', savedMessage);
+    this.server.to(createMessageDto.roomId).emit('receiveMessage', savedMessage);
   }
+
+
 }

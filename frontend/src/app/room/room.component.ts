@@ -1,10 +1,13 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ChatService } from '../chat/chat.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-rooms',
-  templateUrl: './rooms.component.html',
-  styleUrls: ['./rooms.component.scss'],
+  templateUrl: './room.component.html',
+  styleUrls: ['./room.component.scss'],
+  imports: [CommonModule],
+  standalone: true,
 })
 export class RoomsComponent implements OnInit {
   rooms: any[] = [];
@@ -18,7 +21,7 @@ export class RoomsComponent implements OnInit {
   }
 
   loadRooms() {
-    this.chatService.getRooms().subscribe((rooms) => {
+    this.chatService.getRooms().subscribe(rooms => {
       this.rooms = rooms;
     });
   }

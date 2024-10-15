@@ -9,16 +9,17 @@ import { BehaviorSubject } from 'rxjs';
 export class AuthService {
   private isLoggedIn = new BehaviorSubject<boolean>(false);
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
   login(username: string, password: string) {
-    return this.http
-      .post<any>('http://localhost:3000/login', { username, password })
-      .subscribe((response) => {
-        localStorage.setItem('token', response.token);
-        this.isLoggedIn.next(true);
-        this.router.navigate(['/chat']);
-      });
+    return this.http.post<any>('http://localhost:3000/user/login', { username, password }).subscribe(response => {
+      localStorage.setItem('access_token', response.access_token);
+      this.isLoggedIn.next(true);
+      this.router.navigate(['chat']);
+    });
   }
 
   logout() {
@@ -27,7 +28,7 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  isAuthenticated() {
+  isAuthenticated$() {
     return this.isLoggedIn.asObservable();
   }
 }
