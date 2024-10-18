@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
-import { Form, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Form, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
 @Component({

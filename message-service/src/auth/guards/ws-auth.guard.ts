@@ -15,12 +15,14 @@ export class WsJwtGuard implements CanActivate {
     }
 
     const token = authToken.split(' ')[1];
+    console.log(token);
 
     try {
-      const payload = this.jwtService.verify(token);
-      context.switchToWs().getData().user = payload;
+      client.user = this.jwtService.verify(token);
+      console.log(context.switchToWs().getData());
       return true;
     } catch (error) {
+      console.log(error);
       throw new WsException('Invalid token');
     }
   }

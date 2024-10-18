@@ -1,12 +1,14 @@
 <div class="rooms">
   <ul class="room-name">
-    <h3>Rooms</h3>
-    <li *ngFor="let room of rooms" (click)="selectRoom(room._id)">
-      {{ room.name }}
-    </li>
+    <h3 class="title">Rooms</h3>
+    <div class="room-label" *ngFor="let room of rooms$ | async" (click)="selectRoom(room._id)">
+      <span>{{ room.name }}</span>
+    </div>
   </ul>
   <div class="input-box">
-    <input class="input" placeholder="New Room Name" />
-    <button (click)="createRoom()">Create Room</button>
+    <input class="input" [formControl]="newRoomName" placeholder="New Room Name" />
+    <button class="btn" (click)="createRoom()">
+      <span>Create</span>
+    </button>
   </div>
 </div>

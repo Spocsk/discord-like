@@ -9,14 +9,6 @@ import { RoomsComponent } from '../room/room.component';
   imports: [MessageBoxComponent, RoomsComponent],
   standalone: true,
 })
-export class ChatComponent implements OnInit {
-  selectedRoom: string = '';
-
+export class ChatComponent {
   constructor() {}
-
-  selectRoom(roomId: string) {
-    this.selectedRoom = roomId;
-  }
-
-  ngOnInit(): void {}
 }

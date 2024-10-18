@@ -7,8 +7,10 @@ import { io } from 'socket.io-client';
   providedIn: 'root',
 })
 export class ChatService {
+  private roomId: BehaviorSubject<string> = new BehaviorSubject<string>('');
   messages$: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
   token: string = localStorage.getItem('access_token') || '';
+
   private socket = io('http://localhost:3001', {
     extraHeaders: {
       Authorization: `Bearer ${this.token}`,
@@ -21,32 +23,65 @@ export class ChatService {
     });
   }
 
-  getRooms(): Observable<any> {
-    return this.http.get('http://localhost:3001/rooms');
-  }
-
-  createRoom(name: string): Observable<any> {
-    return this.http.post('http://localhost:3001/rooms', { name });
-  }
-
-  joinRoom(roomId: string) {
-    this.socket.emit('joinRoom', roomId);
-  }
-
-  sendMessage(message: string, sender: string) {
-    console.log('sendMessage', message, sender);
-    this.socket.emit('sendMessage', { content: message, sender });
-  }
-
-  getMessagesWS$(): Observable<any> {
-    return this.messages$.asObservable();
-  }
-
-  getAllMessages$(): Observable<any> {
-    return this.http.get('http://localhost:3001/messages/all', {
+  getRooms$(): Observable<any> {
+    return this.http.get('http://localhost:3001/rooms', {
       headers: {
         Authorization: `Bearer ${this.token}`,
       },
     });
+  }
+
+  createRoom$(name: string): Observable<any> {
+    console.log(`Creating room: ${name}`);
+    return this.http.post(
+      'http://localhost:3001/rooms',
+      { name },
+      {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      }
+    );
+  }
+
+  sendMessage(message: string, sender: string, roomId: string) {
+    console.log(`Sending message: ${message} from ${sender} to room: ${roomId}`);
+    this.socket.emit('message', { content: message, sender, roomId });
+  }
+
+  getMessagesFromRoomId$(roomId: string): Observable<any> {
+    return this.http.get(`http://localhost:3001/rooms/messages/${roomId}`, {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+      },
+    });
+  }
+
+  listenToMessagesRoom(roomId: string) {
+    this.socket.on(roomId, (message: any) => {
+      this.messages$.next([...this.messages$.getValue(), { sender: message.sender, content: message.content }]);
+    });
+  }
+
+  joinRoom(roomId: string) {
+    this.socket.emit('joinRoom', roomId).on('message', (data: any) => {
+      console.log(data);
+    });
+  }
+
+  leaveRoom(roomId: string) {
+    this.socket.emit('leaveRoom', roomId);
+  }
+
+  public setRoomId(roomId: string) {
+    this.roomId.next(roomId);
+  }
+
+  public getRoomId() {
+    return this.roomId.getValue();
+  }
+
+  public getRoomId$() {
+    return this.roomId.asObservable();
   }
 }

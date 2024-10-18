@@ -14,7 +14,7 @@ services:
       - mongodb
     volumes:
       - ./user-service/src:/app/src
-      - /app/node_modules
+      - ./user-service/node_modules:/app/node_modules
     networks:
       - node-network
 
@@ -33,7 +33,7 @@ services:
       - mongodb
     volumes:
       - ./message-service/src:/app/src
-      - /app/node_modules
+      - ./message-service/node_modules:/app/node_modules
     networks:
       - node-network
 
